@@ -2,7 +2,6 @@ package app;
 
 import structures.Board;
 //import structures.pieces.*;
-
 /**
  * Rutgers CS213 Sp21 Group 30 Chess Assignment
  * 
@@ -14,4 +13,6 @@ public class Chess {
         Board board = new Board();
         board.printBoard();
     }
+
+    
 }

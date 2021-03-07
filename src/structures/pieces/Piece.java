@@ -1,5 +1,7 @@
 package structures.pieces;
 
+import java.util.ArrayList;
+
 import structures.Spot;
 /**
  * Rutgers CS213 Sp21 Group 30 Chess Assignment
@@ -33,7 +35,7 @@ public abstract class Piece {
         this.team = team;
     }
 
-    public abstract boolean validPieceMove(Spot from, Spot to);
+    public abstract ArrayList<Spot> validPieceMove(Spot from, Spot to);
 
     public abstract String getPieceType();
 }
