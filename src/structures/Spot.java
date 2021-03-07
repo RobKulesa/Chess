@@ -47,4 +47,14 @@ public class Spot {
     public void setPiece(Piece piece) {
         this.piece = piece;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == null || !(o instanceof Spot)) return false;
+        Spot other = (Spot) o;
+        return this.getX() == other.getX() && this.getY() == other.getY();
+    }
+
+
+
 }

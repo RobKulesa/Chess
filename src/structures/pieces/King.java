@@ -13,8 +13,10 @@ public class King extends Piece {
 
     @Override
     public ArrayList<Spot> validPieceMove(Spot from, Spot to) {
-        
-        return null;
+        ArrayList<Spot> path = new ArrayList<Spot>();
+        if(Math.abs(to.getX() - from.getX()) > 1 || Math.abs(to.getY() - from.getY()) > 1 || from.equals(to)) return path;
+        path.add(to); 
+        return path;
     }
 
     @Override

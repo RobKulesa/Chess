@@ -11,9 +11,23 @@ public class Knight extends Piece {
     }
 
     @Override
-    public ArrayList<Spot> validPieceMove(Spot from, Spot to) {
-        // TODO Auto-generated method stub
-        return null;
+    public ArrayList<Spot> getPath(Spot from, Spot to) {
+        ArrayList<Spot> path = new ArrayList<Spot>();
+
+        if(from.equals(to)) return path;
+        int xDist = Math.abs(to.getX() - from.getX());
+        int yDist = Math.abs(to.getY() - from.getY());
+
+        if(xDist == 3) {
+            if(yDist == 1) {
+                path.add(to);
+            }
+        } else if(xDist == 1) {
+            if(yDist == 3) {
+                path.add(to);
+            }
+        }
+        return path;
     }
 
     @Override

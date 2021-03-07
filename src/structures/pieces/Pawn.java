@@ -38,32 +38,51 @@ public class Pawn extends Piece {
         if(isWhite){
             if(to.getY() - from.getY() < 0)
                 return path;
-        } else{
+        } else {
             if(to.getY() - from.getY() > 0)
-                return null;
+                return path;
         }
 
         //Checks Move Type
         if(Math.abs(from.getX()-to.getX()) == 0) { //regular move
             if(to.getPiece() != null)
-                return null;
+                return path;
             //If moving 1 Square forward
-            if(Math.abs(from.getY()-to.getY()) == 1)
-                return null;
-            else { // Moving 2 Squares Forward
-                if(isWhite && to.getY()!= 4)
-                    return null;
-                //if(!isWhite && to.getY()!=) 
-                    //return null;
+            if(Math.abs(from.getY()-to.getY()) == 1) {
+                path.add(to);
+                return path;
             }
-
-
-
+                
+            else { // Moving 2 Squares Forward
+                Spot mid;
+                if(isWhite){
+                    if(from.getY()!= 2)
+                        return path;
+                    mid = new Spot(from.getX(), from.getY()+1);
+                    
+                } else {
+                    if(from.getY()!=7) 
+                        return path;
+                    mid = new Spot(from.getX(), from.getY()-1);
+                }
+                path.add(mid);
+                path.add(to);
+                return path;
+            }
         } else { //trying to take piece
-            
+            if(to.getPiece()==null) {
+                return path;
+            }
+            if(to.getPiece().getTeam() == WHITE && isWhite){
+                return path;
+            }
+            if(to.getPiece().getTeam()== BLACK && !isWhite)
+                return path;
+            if(Math.abs(from.getY()-to.getY()) != 1)
+                return path;
+            path.add(to);
+            return path;
         }
-        return null;
-
     }
 
     @Override

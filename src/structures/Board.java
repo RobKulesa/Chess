@@ -10,7 +10,9 @@ import structures.pieces.*;
  * Board will be made of Spots and can print its current state
  */
 public class Board {
-    
+    public static 
+
+
     Spot[][] spotMat;
 
     public Board() {
@@ -27,7 +29,7 @@ public class Board {
         System.out.println("\n Current Board Status: ");
         for(int i = 0; i < spotMat.length; i++) {
             for(int j = 0; j < spotMat[i].length; j++) {
-                Spot currSpot = this.spotMat[i][j];
+                Spot currSpot = spotMat[i][j];
                 if(currSpot.getPiece() == null) {
                     if((currSpot.getX() + currSpot.getY()) % 2 == 0)
                         System.out.print("##");
@@ -75,13 +77,35 @@ public class Board {
 
     }
 
-    public boolean checkMove(String cmdString) {
+    public boolean gameContinue(){
         return false;
     }
 
+    public boolean checkMove(String cmdString) {
+        //Check cmdString validity
+        if(cmdString.length()!= 5 || cmdString.charAt(2) != ' ')
+            return false;
+        if(cmdString.charAt(0) < 'a' || cmdString.charAt(0) > 'h' || cmdString.charAt(3) < 'a'|| cmdString.charAt(3) > 'h')
+            return false;
+        if(cmdString.charAt(1) < '1' || cmdString.charAt(1) > '8' || cmdString.charAt(4) < '1'|| cmdString.charAt(4) > '8')
+            return false;
+        
+        int xCoordFrom = Integer.parseInt(String.valueOf(cmdString.charAt(1)));
+        int yCoordFrom = Integer.parseInt(String.valueOf(cmdString.charAt(4)));
 
-    public void movePiece() {
 
+        return false;
+    }
+
+    //Returns a boolean that tells Chess.Java if the game is still going on
+    public boolean movePiece(String cmdString) {
+        if(!this.checkMove(cmdString)){
+            System.out.println("Illegal move, try again");
+            return false;
+        } else {
+            //Actually move the piece
+            return this.gameContinue();
+        }
     }
 
 
