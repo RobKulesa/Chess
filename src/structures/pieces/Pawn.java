@@ -23,7 +23,7 @@ public class Pawn extends Piece {
     * Invalid Moves
         1. Can't move if a piece is blocking it
     */
-    public ArrayList<Spot> validPieceMove(Spot from, Spot to) {
+    public ArrayList<Spot> getPath(Spot from, Spot to) {
         ArrayList<Spot> path = new ArrayList<Spot>();
         //Checks piece color
         boolean isWhite = this.getTeam() == WHITE;
@@ -70,9 +70,9 @@ public class Pawn extends Piece {
                 return path;
             }
         } else { //trying to take piece
-            if(to.getPiece()==null) {
-                return path;
-            }
+            //if(to.getPiece()==nu) {
+            //    return path;
+            //}
             if(to.getPiece().getTeam() == WHITE && isWhite){
                 return path;
             }

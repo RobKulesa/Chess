@@ -11,7 +11,7 @@ public class Queen extends Piece {
     }
 
     @Override
-    public ArrayList<Spot> validPieceMove(Spot from, Spot to) {
+    public ArrayList<Spot> getPath(Spot from, Spot to) {
         ArrayList<Spot> path = new ArrayList<Spot>();
 
         if(from.equals(to)) return path;
@@ -24,7 +24,7 @@ public class Queen extends Piece {
                     path.add(new Spot(from.getX(), from.getY() + i));
                 }
             } else {
-                for(int i = 1; i <= dY; i++) {
+                for(int i = 1; i <= -dY; i++) {
                     path.add(new Spot(from.getX(), from.getY() - i));
                 }
             }
@@ -34,7 +34,7 @@ public class Queen extends Piece {
                     path.add(new Spot(from.getX() + i, from.getY()));
                 }
             } else {
-                for(int i = 1; i <= dX; i++) {
+                for(int i = 1; i <= -dX; i++) {
                     path.add(new Spot(from.getX() - i, from.getY()));
                 }
             }
@@ -44,17 +44,17 @@ public class Queen extends Piece {
                     path.add(new Spot(from.getX() + i, from.getY() + i));
                 }
             } else {
-                for(int i = 1; i <= dX; i++) {
+                for(int i = 1; i <= -dX; i++) {
                     path.add(new Spot(from.getX() - i, from.getY() - i));
                 }
             }
-        } else { //dX == -dY
+        } else if(dX == -dY) {
             if(dX > 0) {
                 for(int i = 1; i <= dX; i++) {
                     path.add(new Spot(from.getX() + i, from.getY() - i));
                 }
             } else {
-                for(int i = 1; i <= dX; i++) {
+                for(int i = 1; i <= -dX; i++) {
                     path.add(new Spot(from.getX() - i, from.getY() + i));
                 }
             }

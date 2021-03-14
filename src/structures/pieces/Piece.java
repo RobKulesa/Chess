@@ -12,11 +12,13 @@ import structures.Spot;
 public abstract class Piece {
     private boolean inPlay;
     private int team;
+    private int moveCount;
     public static final int WHITE = 0;
     public static final int BLACK = 1;
 
     public Piece(int team) {
         this.team = team;
+        this.moveCount = 0;
     }
 
     public boolean isInPlay() {
@@ -35,7 +37,23 @@ public abstract class Piece {
         this.team = team;
     }
 
-    public abstract ArrayList<Spot> validPieceMove(Spot from, Spot to);
+    public void incrementMoveCount() {
+        this.moveCount++;
+    }
+
+    public int getMoveCount() {
+        return this.moveCount;
+    }
+
+    public boolean hasMovedOnce() {
+        return this.getMoveCount() == 1;
+    }
+
+    public boolean hasMoved() {
+        return this.getMoveCount() > 0;
+    }
+
+    public abstract ArrayList<Spot> getPath(Spot from, Spot to);
 
     public abstract String getPieceType();
 }

@@ -1,5 +1,6 @@
 package structures;
 import structures.pieces.Piece;
+
 /**
  * Rutgers CS213 Sp21 Group 30 Chess Assignment 
  * @author Rob Kulesa
@@ -55,6 +56,12 @@ public class Spot {
         return this.getX() == other.getX() && this.getY() == other.getY();
     }
 
+    @Override
+    public String toString() {
+        if(this.getPiece() == null) return "(" + (char) (this.getX() + '`') + ", " + (9 - this.getY()) + ", null)";
 
+
+        return "(" + (char) (this.getX() + '`') + ", " + (9 - this.getY()) + ", " + this.getPiece().getPieceType() + ")";
+    }
 
 }

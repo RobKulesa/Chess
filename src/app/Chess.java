@@ -32,7 +32,7 @@ public class Chess {
 			System.out.print("Black's");
 		System.out.print(" move: ");
 		String usrInpt = sc.nextLine();
-		return usrInpt;
+		return usrInpt.toLowerCase();
 	}
 	
 	public static cmdType isValidInpt(String s) {
@@ -44,8 +44,14 @@ public class Chess {
 			if(s.equals("debugResign"))
 				return cmdType.RESIGN;
 		}
-		
-		return cmdType.INVALID;
+		if(s.equals("resign")){
+            return cmdType.RESIGN;
+        }
+        else if(s.substring(s.length()-5).equals("draw?")){
+            return cmdType.DRAWREQUEST;
+        } else {
+            return cmdType.MOVECMD;
+        }
 	}
 	
 	/*
@@ -71,12 +77,11 @@ public class Chess {
 					System.out.println("\nInvalid Input Detected, please try again.");
 					break;
 				case MOVECMD:
-					boolean validCmd = false;
-					//goodCmd = board.checkCmdValidity(usrInpt);
+					boolean validCmd = b.checkMove(usrInpt);
 					while(!validCmd) {
 						System.out.println("Illegal move, try again");
 						usrInpt = promptUserInput(sc, turnCount);
-						if(isValidInpt(usrInpt) == cmdType.MOVECMD)// && board.checkCmdValidity(newInpt))
+						if(isValidInpt(usrInpt) == cmdType.MOVECMD &&  b.checkMove(usrInpt))
 							validCmd = true;
 					}
 					turnCount++;
