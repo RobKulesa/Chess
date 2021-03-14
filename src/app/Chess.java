@@ -10,7 +10,105 @@ import java.util.Scanner;
  * @author Aaron Kan
  */
 public class Chess {
-    public static void main(String[] args) {
+    	//Test boolean for debugging
+	public static boolean debug = true;
+	
+	public enum cmdType{
+		INVALID, MOVECMD, DRAWREQUEST, RESIGN
+	}
+	
+	public static void printWinner(int turnCount) {
+		if(turnCount%2==0)
+			System.out.println("Black wins");
+		else
+			System.out.println("White wins");
+	}
+	
+	public static String promptUserInput(Scanner sc, int turnCount) {
+		
+		if(turnCount%2 == 0) 
+			System.out.print("White's");
+		else
+			System.out.print("Black's");
+		System.out.print(" move: ");
+		String usrInpt = sc.nextLine();
+		return usrInpt;
+	}
+	
+	public static cmdType isValidInpt(String s) {
+		if(debug) {
+			if(s.equals("debugDraw"))
+				return cmdType.DRAWREQUEST;
+			if(s.equals("debugCont"))
+				return cmdType.MOVECMD;
+			if(s.equals("debugResign"))
+				return cmdType.RESIGN;
+		}
+		
+		return cmdType.INVALID;
+	}
+	
+	/*
+	 * 1. Must initialize the board
+	 * 2. Must set up scanner
+	 * 3. Must set up a loop
+	 * 		3.1   
+	 */
+	public static void main(String[] args) {
+		Board b = new Board();
+		Scanner sc = new Scanner(System.in);
+		boolean gameContinue = true;
+		int turnCount = 0;
+		while(gameContinue) {
+			//PRINT STATEMENTS
+			b.printBoard();			
+			String usrInpt = promptUserInput(sc, turnCount);
+			cmdType usrCmdType = isValidInpt(usrInpt);
+			
+			System.out.println();
+			switch(usrCmdType) {
+				case INVALID:
+					System.out.println("\nInvalid Input Detected, please try again.");
+					break;
+				case MOVECMD:
+					boolean validCmd = false;
+					//goodCmd = board.checkCmdValidity(usrInpt);
+					while(!validCmd) {
+						System.out.println("Illegal move, try again");
+						usrInpt = promptUserInput(sc, turnCount);
+						if(isValidInpt(usrInpt) == cmdType.MOVECMD)// && board.checkCmdValidity(newInpt))
+							validCmd = true;
+					}
+					turnCount++;
+					//board.makeChange(usrInpt);
+					//if(board.isCheckMate()) {
+					//	printWinner(turnCount);
+					//	gameContinue = false;
+					//}
+					//if(board.inCheck())
+					//	System.out.println("Check");
+					break;
+				case DRAWREQUEST:
+					System.out.println("draw");
+					gameContinue = false;
+					break;					
+				case RESIGN:
+					printWinner(turnCount);
+					gameContinue = false;
+					break;
+				default:
+					if(debug) {
+						System.out.println("Error: Default of switch statement reached");
+					}
+					
+					
+			}
+		}
+	}
+}
+
+/*
+public static void main(String[] args) {
         int turn = 1;
         Board board = new Board();
         board.printBoard();
@@ -31,4 +129,4 @@ public class Chess {
         }
         sc.close();
     }
-}
+*/
