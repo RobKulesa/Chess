@@ -76,8 +76,10 @@ public class Board {
         spotMat[4][7].setPiece(new King(Piece.WHITE));
 
         */
-        this.spotMat[3][7].setPiece(new Bishop(Piece.WHITE));
-        this.spotMat[3][0].setPiece(new King(Piece.BLACK));
+        spotMat[0][0].setPiece(new Rook(Piece.BLACK));
+        spotMat[7][0].setPiece(new Rook(Piece.BLACK));
+        spotMat[4][0].setPiece(new King(Piece.BLACK));
+        spotMat[1][0].setPiece(new Knight(Piece.BLACK));
 
     }
 
@@ -85,7 +87,7 @@ public class Board {
         return false;
     }
 
-    public boolean checkMove(String cmdString) {
+    public boolean checkString(String cmdString) {
         //Check cmdString validity
         System.out.println("Checking cmdString validity");
         if(cmdString.length() != 5 || cmdString.charAt(2) != ' ')
@@ -97,26 +99,39 @@ public class Board {
     
         Spot from = this.spotMat[cmdString.charAt(0) - 'a'][8 - Character.getNumericValue(cmdString.charAt(1))];
         Spot to = this.spotMat[cmdString.charAt(3) - 'a'][8 - Character.getNumericValue(cmdString.charAt(4))];
+        return checkMove(from, to);
+    }
 
+    public boolean checkMove(Spot from, Spot to) {
         System.out.println("Checking if designated coordinate has a piece");
-        
-        /* for(int j = 0; j < spotMat.length; j++) {
-            for(int i = 0; i < spotMat[j].length; i++) {
-                System.out.println(spotMat[i][j]);
-            }
-        }
-        if(from.getPiece() == null){
-            System.out.println(from);
-            System.out.println("No piece was found");
-            return false;
-        } */
-            
         System.out.println("Getting Path from piece");
-        
+        if(from.getPiece() == null) return false;
         ArrayList<Spot> path = from.getPiece().getPath(from, to);
         System.out.println(path);
         //Check if any pieces in the way except for final spot in path
         if(path.isEmpty() || piecesInWay(path, from.getPiece().getTeam())) return false;
+
+        //Check if the move in question is an attempt for castling
+        if(from.getPiece().getPieceType().charAt(1) == 'K' && path.size() == 2){
+            //Check which rook is affected
+            System.out.println("Castling attempt detected");
+            Spot rookSpot;
+            Piece rook;
+            if(to.getX()-from.getX() > 0){
+                rookSpot = spotMat[7][from.getY()-1];
+            } else {
+                rookSpot = spotMat[0][from.getY()-1];
+            }
+            System.out.println(rookSpot);
+            rook = rookSpot.getPiece();
+            
+            if(rook == null || rookSpot.getPiece().getPieceType().charAt(1) != 'R' || rook.hasMoved()) return false;
+            else{
+                System.out.println("Checking rook path");
+                return checkMove(rookSpot, path.get(0));
+            }
+        }
+
 
         return true;
     }
@@ -130,22 +145,98 @@ public class Board {
             else if(boardSpot.getPiece() != null && boardSpot.getPiece().getTeam() == team) { //friendly piece at end of path
                 return true;
             }
-            //TODO: need to implement en passant for pawns and castling for kings and other potential special move cases
         }
         return false;
     }
     //Returns a boolean that tells Chess.Java if the game is still going on
     public boolean movePiece(String cmdString) {
-        if(!this.checkMove(cmdString)){
+        if(!this.checkString(cmdString)){
             System.out.println("Illegal move, try again");
             return false;
         } else {
             //Actually move the piece
-            return this.gameContinue();
+            
+            
+            Spot from = this.spotMat[cmdString.charAt(0) - 'a'][8 - Character.getNumericValue(cmdString.charAt(1))];
+            Spot to = this.spotMat[cmdString.charAt(3) - 'a'][8 - Character.getNumericValue(cmdString.charAt(4))];
+            
+            //Check if the move in question is an attempt for castling
+        if(from.getPiece().getPieceType().charAt(1) == 'K' && Math.abs(from.getX() - to.getX()) > 1){
+            //Check which rook is affected
+            System.out.println("Castling attempt detected");
+            Spot rookFromSpot;
+            Spot rookToSpot;
+            Piece rook;
+            if(to.getX()-from.getX() > 0){
+                
+                rookFromSpot = spotMat[7][from.getY()-1];
+                rookToSpot = spotMat[from.getX()][from.getY()-1];
+
+            } else {
+                rookFromSpot = spotMat[0][from.getY()-1];
+                rookToSpot = spotMat[from.getX()-2][from.getY()-1];
+            }
+            System.out.println(rookFromSpot);
+            System.out.println(rookToSpot);
+            rook = rookFromSpot.getPiece();
+            rookFromSpot.setPiece(null);
+            rookToSpot.setPiece(rook);
+        }
+            
+            /**
+             * before move is made, evaluate check status to see if the move will put your own king in check. If so it is not a valid move
+             * After move is made, evaluate check status to see if any king is in check. If so we have to print that the king is in check
+             */
+            to.setPiece(from.getPiece());
+            from.setPiece(null);
+            to.getPiece().incrementMoveCount();
+            
+
+
+            //return this.gameContinue();
+            return true;
         }
     }
 
+    /**
+     * Split into find king location
+     * Change evaluate check status to evaluate check status of specific king
+     */
 
+    public Spot findKing(int team) {
+        for(int j = 0; j < spotMat.length; j++) {
+            for(int i = 0; i < spotMat[j].length; i++) {
+                Spot currSpot = spotMat[i][j];
+                if(currSpot.getPiece() != null) {
+                    Piece currPiece = currSpot.getPiece();
+                    if(currPiece instanceof King && currPiece.getTeam() == team) {
+                        return currSpot;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+   
+   //Argument: Proposed SPOT location of THE KING, and the team that may or may not be in check
+    public void evaluateCheckStatus() {
+        //Find where both kings are located
+        
 
-
+        //Both kings have been found at this point. Begin evaluating check status for both kings
+        for(int j = 0; j < spotMat.length; j++) {
+            for(int i = 0; i < spotMat[j].length; i++) {
+                Spot currSpot = spotMat[i][j];
+                if(currSpot.getPiece() != null) {
+                    Piece currPiece = currSpot.getPiece();
+                    Spot enemyKingSpot = currPiece.getTeam() == Piece.WHITE ? whiteKingSpot : blackKingSpot;
+                    King enemyKing = (King) enemyKingSpot.getPiece();
+                    if(checkMove(currSpot, enemyKingSpot)) {
+                        enemyKing.setInCheck(true);
+                    }    
+                }
+            }
+        }
+        return;
+    }
 }

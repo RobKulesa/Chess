@@ -14,7 +14,7 @@ public class Chess {
 	public static boolean debug = true;
 	
 	public enum cmdType{
-		INVALID, MOVECMD, DRAWREQUEST, RESIGN
+		INVALID, MOVECMD, DRAWREQUEST, RESIGN, PROMO
 	}
 	
 	public static void printWinner(int turnCount) {
@@ -77,15 +77,15 @@ public class Chess {
 					System.out.println("\nInvalid Input Detected, please try again.");
 					break;
 				case MOVECMD:
-					boolean validCmd = b.checkMove(usrInpt);
+					boolean validCmd = b.checkString(usrInpt);
 					while(!validCmd) {
 						System.out.println("Illegal move, try again");
 						usrInpt = promptUserInput(sc, turnCount);
-						if(isValidInpt(usrInpt) == cmdType.MOVECMD &&  b.checkMove(usrInpt))
+						if(isValidInpt(usrInpt) == cmdType.MOVECMD &&  b.checkString(usrInpt))
 							validCmd = true;
 					}
 					turnCount++;
-					//board.makeChange(usrInpt);
+					b.movePiece(usrInpt);
 					//if(board.isCheckMate()) {
 					//	printWinner(turnCount);
 					//	gameContinue = false;
