@@ -49,7 +49,7 @@ public class Chess {
         }
         else if(s.substring(s.length()-5).equals("draw?")){
             return cmdType.DRAWREQUEST;
-        } else {
+        }else {
             return cmdType.MOVECMD;
         }
 	}

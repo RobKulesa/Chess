@@ -36,10 +36,10 @@ public class Pawn extends Piece {
 
         //errors if it is moving in the wrong direction (pawns cant move backwards)
         if(isWhite){
-            if(to.getY() - from.getY() < 0)
+            if(to.getY() - from.getY() > 0)
                 return path;
         } else {
-            if(to.getY() - from.getY() > 0)
+            if(to.getY() - from.getY() < 0)
                 return path;
         }
 
@@ -51,11 +51,9 @@ public class Pawn extends Piece {
             if(Math.abs(from.getY()-to.getY()) == 1) {
                 path.add(to);
                 return path;
-            }
-                
-            else { // Moving 2 Squares Forward
+            } else { // Moving 2 Squares Forward
                 Spot mid;
-                if(isWhite){
+                if(!isWhite){
                     if(from.getY()!= 2)
                         return path;
                     mid = new Spot(from.getX(), from.getY()+1);
@@ -69,15 +67,7 @@ public class Pawn extends Piece {
                 path.add(to);
                 return path;
             }
-        } else { //trying to take piece
-            //if(to.getPiece()==nu) {
-            //    return path;
-            //}
-            if(to.getPiece().getTeam() == WHITE && isWhite){
-                return path;
-            }
-            if(to.getPiece().getTeam()== BLACK && !isWhite)
-                return path;
+        } else {
             if(Math.abs(from.getY()-to.getY()) != 1)
                 return path;
             path.add(to);

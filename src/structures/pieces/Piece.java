@@ -45,6 +45,11 @@ public abstract class Piece {
         return this.moveCount;
     }
 
+    public int getEnemyTeam() {
+        if(this.team == Piece.WHITE) return Piece.BLACK;
+        else return Piece.WHITE;
+    }
+
     public boolean hasMovedOnce() {
         return this.getMoveCount() == 1;
     }
