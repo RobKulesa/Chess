@@ -80,7 +80,7 @@ public class Board {
 
     public void initBoard() {
         //Pawns
-        /*
+        
         for(int i = 0; i < 8; i++) {
             spotMat[i][1].setPiece(new Pawn(Piece.BLACK));
             spotMat[i][6].setPiece(new Pawn(Piece.WHITE));
@@ -105,10 +105,10 @@ public class Board {
         spotMat[3][7].setPiece(new Queen(Piece.WHITE));
         spotMat[4][7].setPiece(new King(Piece.WHITE));
 
-        */
-        spotMat[4][0].setPiece(new King(Piece.BLACK));
-        spotMat[4][7].setPiece(new King(Piece.WHITE));
-        spotMat[1][6].setPiece(new Pawn(Piece.BLACK));
+        /* spotMat[7][0].setPiece(new King(Piece.BLACK));
+        spotMat[7][2].setPiece(new King(Piece.WHITE));
+        spotMat[3][1].setPiece(new Queen(Piece.WHITE));
+        //spotMat[4][1].setPiece(new Rook(Piece.BLACK)); */
 
     }
 
@@ -116,7 +116,7 @@ public class Board {
         return false;
     }
 
-    public boolean checkString(String cmdString) {
+    public boolean checkString(String cmdString, int turncount) {
         //Check cmdString validity
         System.out.println("Checking cmdString validity");
         if((cmdString.length() != 5 && cmdString.length() != 7)|| cmdString.charAt(2) != ' ')
@@ -127,6 +127,9 @@ public class Board {
             return false;
     
         Spot from = this.spotMat[cmdString.charAt(0) - 'a'][8 - Character.getNumericValue(cmdString.charAt(1))];
+
+        if(turncount % 2 != from.getPiece().getTeam()) return false;
+        
         Spot to = this.spotMat[cmdString.charAt(3) - 'a'][8 - Character.getNumericValue(cmdString.charAt(4))];
         Character promoRequest = null;
         if(cmdString.length() == 7 ){
@@ -137,11 +140,11 @@ public class Board {
     }
 
     public boolean checkMove(Spot from, Spot to, Character promoRequest) {
-        System.out.println("Checking if designated coordinate has a piece");
-        System.out.println("Getting Path from piece");
+        //System.out.println("Checking if designated coordinate has a piece");
+        //System.out.println("Getting Path from piece");
         if(from.getPiece() == null) return false;
         ArrayList<Spot> path = from.getPiece().getPath(from, to);
-        System.out.println(path);
+        //System.out.println(path);
         //Check if any pieces in the way except for final spot in path
         if(path.isEmpty() || piecesInWay(path, from.getPiece().getTeam())) return false;
 
@@ -266,39 +269,13 @@ public class Board {
             
             
         }
-
-        /**
-        * Before move is made after initial validity checks, make move on copy of board instance and pass to isTeamInCheck
-        * If returns true, move is not valid as it puts own king in check
-        * If returns false, move is valid and we make move on current instance of board
-        * Dont need to check for checkmate here because it will be accounted for with isTeamInCheck
-        * 
-        * After a move is made after initial validity checks, make move on current instance of board and evaluate 
-        * 1. isTeamInCheckMate on enemy team
-        * |--If returns true, game over
-        * |--If returns false, do nothing
-        * 
-        * 2. isTeamInCheck on enemy team
-        * |--If returns true, enemy king is in check
-        * |--If returns false, do nothing.
-        */
-
-            
         to.setPiece(from.getPiece());
         from.setPiece(null);
         to.getPiece().incrementMoveCount();
         this.lastMove = to;
 
-
-        if(isTeamInCheck(makeCopy(), to.getPiece().getEnemyTeam())) System.out.println("***Check***");
-
         return true;
     }
-
-    /**
-     * Split into find king location
-     * Change evaluate check status to evaluate check status of specific king
-     */
 
     public Spot findKing(int team) {
         for(int j = 0; j < spotMat.length; j++) {
@@ -319,6 +296,7 @@ public class Board {
         if(evaluatedTeam == Piece.WHITE) System.out.println("**Evaulating check status for white king");
         if(evaluatedTeam == Piece.BLACK) System.out.println("**Evaulating check status for black king");
         Spot kingSpot = board.findKing(evaluatedTeam);
+        if(kingSpot == null) return false;
         for(int j = 0; j < board.spotMat.length; j++) {
             for(int i = 0; i < board.spotMat[j].length; i++) {
                 Spot currSpot = board.spotMat[i][j];
@@ -326,18 +304,12 @@ public class Board {
                     Piece currPiece = currSpot.getPiece();
                     if(currPiece.getTeam() != evaluatedTeam) {
                         if(board.checkMove(currSpot, kingSpot, null)) {
-                            
-                            if(evaluatedTeam == Piece.WHITE) System.out.println("**White king is in check");
-                            if(evaluatedTeam == Piece.BLACK) System.out.println("**Black king is in check");
-                            
                             return true;
                         }
                     }    
                 }
             }
         }
-        if(evaluatedTeam == Piece.WHITE) System.out.println("**White king is NOT in check");
-        if(evaluatedTeam == Piece.BLACK) System.out.println("**Black king is NOT in check");
         return false;
     }
 
@@ -346,63 +318,34 @@ public class Board {
         if(evaluatedTeam == Piece.BLACK) System.out.println("**Evaulating checkMATE status for black king");
         Spot kingSpot = findKing(evaluatedTeam);
 
+        if(!isTeamInCheck(makeCopy(), evaluatedTeam)) return false;
+
+        System.out.println("***Check***");
+        
         //Build list of spots king could move to
-        ArrayList<Spot> spots = new ArrayList<Spot>();
-        if(kingSpot.getX() == 1) {
-            if(kingSpot.getY() == 1) { //top left
-                spots.add(new Spot(2, 1));
-                spots.add(new Spot(2, 2));
-                spots.add(new Spot(1, 2));
-            } else if(kingSpot.getY() == 8) { //bottom left
-                spots.add(new Spot(2, 8));
-                spots.add(new Spot(2, 7));
-                spots.add(new Spot(1, 7));
-            } else {
-                spots.add(new Spot(kingSpot.getX(), kingSpot.getY()-1)); //up one
-                spots.add(new Spot(kingSpot.getX(), kingSpot.getY()+1)); //down one
-                spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()-1)); //up right one
-                spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY())); //right one
-                spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()+1)); //down right one
+        ArrayList<Spot> potSpots = new ArrayList<Spot>();
+        potSpots.add(new Spot(kingSpot.getX(), kingSpot.getY()-1)); //up one
+        potSpots.add(new Spot(kingSpot.getX(), kingSpot.getY()+1)); //down one
+        potSpots.add(new Spot(kingSpot.getX()-1, kingSpot.getY())); //left one
+        potSpots.add(new Spot(kingSpot.getX()+1, kingSpot.getY())); //right one
+        potSpots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()-1)); //up right one
+        potSpots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()-1)); //up left one
+        potSpots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()+1)); //down left one
+        potSpots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()+1)); //down right one
+        ArrayList<Spot> validSpots = new ArrayList<Spot>();
+        
+        for(Spot potSpot : potSpots) {
+            if(potSpot.getX() <= 8 && potSpot.getX() >= 1 && potSpot.getY() <= 8 && potSpot.getY() >= 1) {
+                validSpots.add(potSpot);
             }
-        } else if(kingSpot.getX() == 8) {
-            if(kingSpot.getY() == 1) { //top right
-                spots.add(new Spot(7, 1));
-                spots.add(new Spot(7, 2));
-                spots.add(new Spot(8, 2));
-            } else if(kingSpot.getY() == 8) { //bottom right
-                spots.add(new Spot(7, 8));
-                spots.add(new Spot(7, 7));
-                spots.add(new Spot(8, 7));
-            } else {
-                spots.add(new Spot(kingSpot.getX(), kingSpot.getY()-1)); //up one
-                spots.add(new Spot(kingSpot.getX(), kingSpot.getY()+1)); //down one
-                spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()-1)); //up left one
-                spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY())); //left one
-                spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()+1)); //down left one
-            }
-        } else if(kingSpot.getY() == 1) {
-            //corners already accounted for
-            spots.add(new Spot(kingSpot.getX(), kingSpot.getY()+1)); //down one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY())); //left one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY())); //right one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()+1)); //down left one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()+1)); //down right one
-        } else if(kingSpot.getY() == 8) {
-            spots.add(new Spot(kingSpot.getX(), kingSpot.getY()-1)); //up one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY())); //left one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY())); //right one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()-1)); //up right one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()-1)); //up left one
-        } else {
-            spots.add(new Spot(kingSpot.getX(), kingSpot.getY()-1)); //up one
-            spots.add(new Spot(kingSpot.getX(), kingSpot.getY()+1)); //down one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY())); //left one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY())); //right one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()-1)); //up right one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()-1)); //up left one
-            spots.add(new Spot(kingSpot.getX()-1, kingSpot.getY()+1)); //down left one
-            spots.add(new Spot(kingSpot.getX()+1, kingSpot.getY()+1)); //down right one
         }
-        return false;
+
+        for(Spot spot : validSpots) {
+            if(checkMove(kingSpot, spot, null)) {
+                return false;
+            }
+        }
+        return true;
+        
     }
 }

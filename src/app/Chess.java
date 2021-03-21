@@ -1,6 +1,7 @@
 package app;
 
 import structures.Board;
+import structures.pieces.Piece;
 import java.util.Scanner;
 //import structures.pieces.*;
 /**
@@ -77,21 +78,19 @@ public class Chess {
 					System.out.println("\nInvalid Input Detected, please try again.");
 					break;
 				case MOVECMD:
-					boolean validCmd = b.checkString(usrInpt);
+					boolean validCmd = b.checkString(usrInpt, turnCount);
 					while(!validCmd) {
 						System.out.println("Illegal move, try again");
 						usrInpt = promptUserInput(sc, turnCount);
-						if(isValidInpt(usrInpt) == cmdType.MOVECMD &&  b.checkString(usrInpt))
+						if(isValidInpt(usrInpt) == cmdType.MOVECMD &&  b.checkString(usrInpt, turnCount))
 							validCmd = true;
 					}
 					turnCount++;
 					b.movePiece(usrInpt);
-					//if(board.isCheckMate()) {
-					//	printWinner(turnCount);
-					//	gameContinue = false;
-					//}
-					//if(board.inCheck())
-					//	System.out.println("Check");
+					if(b.isTeamInCheckMate(turnCount % 2 == 0 ? Piece.WHITE : Piece.BLACK)) {
+						gameContinue = false;
+						printWinner(turnCount);
+					}
 					break;
 				case DRAWREQUEST:
 					System.out.println("draw");
@@ -103,7 +102,7 @@ public class Chess {
 					break;
 				default:
 					if(debug) {
-						System.out.println("Error: Default of switch statement reached");
+						System.out.println("Error: Default of switch statement in Chess.java reached");
 					}
 					
 					

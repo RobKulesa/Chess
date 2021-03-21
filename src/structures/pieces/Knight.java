@@ -18,12 +18,12 @@ public class Knight extends Piece {
         int xDist = Math.abs(to.getX() - from.getX());
         int yDist = Math.abs(to.getY() - from.getY());
 
-        if(xDist == 3) {
+        if(xDist == 2) {
             if(yDist == 1) {
                 path.add(to);
             }
         } else if(xDist == 1) {
-            if(yDist == 3) {
+            if(yDist == 2) {
                 path.add(to);
             }
         }
