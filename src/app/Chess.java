@@ -3,21 +3,38 @@ package app;
 import structures.Board;
 import structures.pieces.Piece;
 import java.util.Scanner;
-//import structures.pieces.*;
+
 /**
  * Rutgers CS213 Sp21 Group 30 Chess Assignment
+ * 
+ * Chess is the class that creates the board instance to run the game,
+ * and interfaces with the players to communicate their commands to move pieces on the chess board.
+ * It keeps track of the number of turns that have been taken, and when the chess game reaches
+ * an end case, it communicates to the players which team won, ends the game, and stops the program.
  * 
  * @author Rob Kulesa
  * @author Aaron Kan
  */
 public class Chess {
-    	//Test boolean for debugging
+    /**
+	 * Test boolean used for debugging
+	 */
 	public static boolean debug = true;
 	
+
+	/**
+	 * Represents all the different kinds of commands a user-input could be
+	 */
 	public enum cmdType{
-		INVALID, MOVECMD, DRAWREQUEST, RESIGN, PROMO
+		INVALID, MOVECMD, DRAWREQUEST, RESIGN
 	}
 	
+	
+	/** 
+	 * Prints the winning team of the current game.
+	 * 
+	 * @param turnCount 	the number of turns that have been taken in the current game
+	 */
 	public static void printWinner(int turnCount) {
 		if(turnCount%2==0)
 			System.out.println("Black wins");
@@ -25,8 +42,15 @@ public class Chess {
 			System.out.println("White wins");
 	}
 	
+	
+	/** 
+	 * Prompts the user for their desired move.
+	 * 
+	 * @param sc 	        the {@link Scanner} object used to scan input from the java console
+	 * @param turnCount 	the number of turns that have been taken in the current game
+	 * @return              String command passed by a player from the console
+	 */
 	public static String promptUserInput(Scanner sc, int turnCount) {
-		
 		if(turnCount%2 == 0) 
 			System.out.print("White's");
 		else
@@ -36,6 +60,13 @@ public class Chess {
 		return usrInpt.toLowerCase();
 	}
 	
+	
+	/** 
+	 * Analyzes the input string to determine the type of command given by the player.
+	 * 
+	 * @param s 	the string command sent by the player
+	 * @return 		cmdType of either resign command, draw command, or move command
+	 */
 	public static cmdType isValidInpt(String s) {
 		if(debug) {
 			if(s.equals("debugDraw"))
@@ -55,11 +86,23 @@ public class Chess {
         }
 	}
 	
-	/*
-	 * 1. Must initialize the board
-	 * 2. Must set up scanner
-	 * 3. Must set up a loop
-	 * 		3.1   
+	
+	/** 
+	 * Creates and holds the board instance for the current game. 
+	 * Takes in user input for each turn, and determines the command type to be:
+	 * <ul>
+	 * <li>An invalid command: The commmand is ignored and we ask for user input
+	 * again.
+	 * <li>A move command: The move command is checked for validity. If it is
+	 * not valid, it requests user input again. If it is valid, the move is
+	 * executed and the board is evaluated for end (checkmate) conditions.
+	 * If the board is in an end condition, the winner is printed and the game
+	 * ends. Otherwise, the game continues.
+	 * <li>A draw command: The game ends in a draw.
+	 * <li>A resign command: The game ends with the resigning team losing.
+	 * </ul>
+	 * 
+	 * @param args an array of command-line arguments for the application
 	 */
 	public static void main(String[] args) {
 		Board b = new Board();
@@ -88,6 +131,7 @@ public class Chess {
 					turnCount++;
 					b.movePiece(usrInpt);
 					if(b.isTeamInCheckMate(turnCount % 2 == 0 ? Piece.WHITE : Piece.BLACK)) {
+						System.out.println("Checkmate");
 						gameContinue = false;
 						printWinner(turnCount);
 					}
@@ -104,33 +148,7 @@ public class Chess {
 					if(debug) {
 						System.out.println("Error: Default of switch statement in Chess.java reached");
 					}
-					
-					
 			}
 		}
 	}
 }
-
-/*
-public static void main(String[] args) {
-        int turn = 1;
-        Board board = new Board();
-        board.printBoard();
-        System.out.println();
-        boolean gameContinue = true;
-        Scanner sc = new Scanner(System.in);
-        while(gameContinue){
-            if(turn % 2 == 0)
-                System.out.print("Black's move: ");
-            else
-                System.out.print("White's move: ");
-            sc.nextLine();
-            //gameContinue = board.movePiece(cmdString);
-            System.out.println();
-            board.printBoard();
-            System.out.println();
-
-        }
-        sc.close();
-    }
-*/

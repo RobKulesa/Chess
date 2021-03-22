@@ -6,23 +6,42 @@ import structures.Spot;
 /**
  * Rutgers CS213 Sp21 Group 30 Chess Assignment
  * 
+ * Pawn is a class that implements the Piece abstract class.
+ * Represents the Pawn piece of a standard chess game and knows
+ * which standard Pawn moves are allowed and which ones are not.
+ * 
  * @author Rob Kulesa
  * @author Aaron Kan
  */
 public class Pawn extends Piece {
+    
+    
+    /**
+     * Constructor for a Pawn instance
+     * 
+     * @param color indicates which team a Pawn belongs to
+     */
     public Pawn(int color) {
         super(color);
     }
 
+    
+    /** 
+     * This method determines move validity by the following measures:
+     * <ol type = "1">
+     * <li> Determines if the pawn is moving too far in the X or Y direction
+     * <li> Determines if the pawn is moving in the correct vertical direction (according to its team)
+     * <li> Determines if the pawn is attempting to move one step forward, two steps forward
+     *      Or one step diagonal forward
+     * <li> Determines if anything might inhibit the pawn from moving in one of the above scenarios
+     * </ol>
+     * 
+     * @param from     The origin {@link Spot} that the Pawn is moving from.
+     * @param to       The destination {@link Spot} that the Pawn is moving to.
+     * @return         ArrayList of spots that the Pawn follows to get to its
+     *                 destination.
+     */
     @Override
-    /*
-    * Valid Moves
-        1. Move forward 1 spot
-        2. Move diagonal forward to take
-        3. To move forward 2 spots for 1st move
-    * Invalid Moves
-        1. Can't move if a piece is blocking it
-    */
     public ArrayList<Spot> getPath(Spot from, Spot to) {
         ArrayList<Spot> path = new ArrayList<Spot>();
         //Checks piece color
@@ -75,6 +94,12 @@ public class Pawn extends Piece {
         }
     }
 
+    
+    /**
+     * Returns a formatted string representing the pawn as it appears in board printouts.
+     * 
+     * @return String
+     */
     @Override
     public String getPieceType() {
         if(this.getTeam() == WHITE) return "wp";
