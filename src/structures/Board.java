@@ -104,16 +104,6 @@ public class Board {
         spotMat[5][7].setPiece(new Bishop(Piece.WHITE));
         spotMat[3][7].setPiece(new Queen(Piece.WHITE));
         spotMat[4][7].setPiece(new King(Piece.WHITE));
-
-        /* spotMat[7][0].setPiece(new King(Piece.BLACK));
-        spotMat[7][2].setPiece(new King(Piece.WHITE));
-        spotMat[3][1].setPiece(new Queen(Piece.WHITE));
-        //spotMat[4][1].setPiece(new Rook(Piece.BLACK)); */
-
-    }
-
-    public boolean gameContinue(){
-        return false;
     }
 
     public boolean checkString(String cmdString, int turncount) {
